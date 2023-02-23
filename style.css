@@ -1,0 +1,30 @@
+/* Change font to Arial for the web page */
+body {
+	font-family: Arial;
+}
+
+/* Center align headers */
+.centered {
+	text-align: center;
+}
+
+/* Flexbox container for children */
+.container {
+  display: flex;
+}
+
+/* Children 1 that takes up 33% of the page */
+#column1 {
+	flex: 33%;
+}
+
+/* Children 2 that takes up 33% of the page */
+#column2 {
+	flex: 33%;
+}
+
+/* Children 3 that takes up 33% of the page */
+#column3 {
+	flex: 33%;
+}
+
