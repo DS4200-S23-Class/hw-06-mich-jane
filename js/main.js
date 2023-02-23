@@ -66,7 +66,7 @@ function lengthScatter() {
 		    .range([ "#00FF00", "#FFA500", "#87CEFA"])
 
 		// Plot scatter plot
-        FRAME1.append("g")
+        const circle1 = FRAME1.append("g")
 	        .selectAll("dot")
 	        // Loop through all the data from the dataset and append them as a circle
 	        .data(data)
@@ -77,9 +77,8 @@ function lengthScatter() {
 			.attr("fill", (d) => { return color(d.Species); })
 	        .attr("r", 5)
 	        .attr("stroke", "none")
-	        .attr("opacity", 0.5)
+	        .style("opacity", 0.5)
 	        .attr("class", "point");
-	        // .attr("id", (d) => { return "(" + d.Sepal_Length + "," + d.Petal_Length + ")"; });
 	});
 }
 // Call the length scatter plot function to plot data points
@@ -147,7 +146,7 @@ function widthScatter() {
 		    .range([ "#87CEFA", "#FFA500", "#00FF00" ])
 
 		// Plot scatter plot
-        FRAME2.append("g")
+        const circle2 = FRAME2.append("g")
 	        .selectAll("dot")
 	        // Loop through all the data from the dataset and append them as a circle
 	        .data(data)
@@ -158,9 +157,35 @@ function widthScatter() {
 			.attr("fill", (d) => { return color(d.Species); })
 	        .attr("r", 5)
 	        .attr("stroke", "none")
-	        .attr("opacity", 0.5)
+	        .style("opacity", 0.5)
 	        .attr("class", "point");
-	        // .attr("id", (d) => { return "(" + d.Sepal_Length + "," + d.Petal_Length + ")"; });
+
+	    // Add brushing
+	 	 FRAME2
+		  // Add the brush feature using the d3.brush function
+		    .call( d3.brush()   
+		    // initialise the brush area: start at 0,0 and finishes at width,height            
+		      .extent( [ [0,0], [VIS_WIDTH,VIS_HEIGHT] ] ) 
+		      .on("start brush", updateChart) // Each time the brush selection changes, trigger the 'updateChart' function
+		    )
+
+
+		  // Function that is triggered when brushing is performed
+		  function updateChart() {
+		    extent = d3.event.selection
+		    circle2.classed("selected", function(d){ return isBrushed(extent, x(d.Sepal_Width), y(d.Petal_Width) ) } )
+		  }
+
+		  // A function that return TRUE or FALSE according if a dot is in the selection or not
+		  function isBrushed(brush_coords, cx, cy) {
+		       let x0 = brush_coords[0][0],
+		           x1 = brush_coords[1][0],
+		           y0 = brush_coords[0][1],
+		           y1 = brush_coords[1][1];
+		      // This return TRUE or FALSE depending on if the points is in the selected area
+		      return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;    
+		  }
+
 	});
 }
 // Call the width scatter plot function to plot data points
@@ -229,10 +254,18 @@ function barChart() {
 			    .attr("width", x.bandwidth())
 			    .attr("height", (d) => { return VIS_HEIGHT - y(50); })
 			    .attr("fill", (d) => { return color(d.Species); })
-			    .attr("opacity", 0.5)
+			    .style("opacity", 0.5)
 			    .attr("class", "bar");
+
 
 	});
 }
 // Call the bar chart function to plot 
 barChart();
+
+
+// If the user brushes over points in the second scatter plot, corresponding points in the first scatter plot should be 
+// highlighted with increased opacity and an orange border and corresponding bars should be highlighted with an orange 
+// border in the bar chart.
+
+ 
