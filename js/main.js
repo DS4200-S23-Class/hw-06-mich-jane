@@ -1,7 +1,7 @@
 // Set constants for frame and vis dimensions (height and width) and margins
-const FRAME_HEIGHT = 700;
-const FRAME_WIDTH = 700;
-const MARGINS = {left: 75, right: 75, top: 75, bottom: 75};
+const FRAME_HEIGHT = 415;
+const FRAME_WIDTH = 415;
+const MARGINS = {left: 50, right: 50, top: 50, bottom: 50};
 const VIS_HEIGHT = FRAME_HEIGHT - MARGINS.top - MARGINS.bottom;
 const VIS_WIDTH = FRAME_WIDTH - MARGINS.left - MARGINS.bottom;
 

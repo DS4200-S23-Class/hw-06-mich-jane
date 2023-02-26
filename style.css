@@ -11,21 +11,26 @@ body {
 /* Flexbox container for children */
 .container {
   display: flex;
+  flex-direction: row;
 }
+
 
 /* Children 1 that takes up 33% of the page */
 #column1 {
 	flex: 33%;
+	flex-grow: 1;
 }
 
 /* Children 2 that takes up 33% of the page */
 #column2 {
 	flex: 33%;
+	flex-grow: 1;
 }
 
 /* Children 3 that takes up 33% of the page */
 #column3 {
 	flex: 33%;
+	flex-grow: 1;
 }
 
 
