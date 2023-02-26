@@ -5,7 +5,6 @@ const MARGINS = {left: 75, right: 75, top: 75, bottom: 75};
 const VIS_HEIGHT = FRAME_HEIGHT - MARGINS.top - MARGINS.bottom;
 const VIS_WIDTH = FRAME_WIDTH - MARGINS.left - MARGINS.bottom;
 
-// OPACITY MIGHT NOT WORKING??
 // Create frame1
 const FRAME1 = d3.select("#vis1")
 				.append("svg")
@@ -85,7 +84,6 @@ function lengthScatter() {
 lengthScatter();
 
 
-// OPACITY MIGHT NOT WORKING??
 // Create frame2
 const FRAME2 = d3.select("#vis2")
 				.append("svg")
@@ -125,8 +123,8 @@ function widthScatter() {
 	        .attr("text-anchor", "middle")
 	        .attr("font-weight", "700")
 	        .style("font-size", "18px")
-	        .text("Petal_Length vs. Sepal_Length");
-        
+	        .text("Petal_Width vs. Sepal_Width");
+
 	    // Add tick marks for x axis
 		FRAME2.append("g")
 			.attr("transform", 
@@ -165,26 +163,25 @@ function widthScatter() {
 		  // Add the brush feature using the d3.brush function
 		    .call( d3.brush()   
 		    // initialise the brush area: start at 0,0 and finishes at width,height            
-		      .extent( [ [0,0], [VIS_WIDTH,VIS_HEIGHT] ] ) 
+		      .extent( [ [MARGINS.left, MARGINS.bottom], [VIS_WIDTH + MARGINS.left, VIS_HEIGHT + MARGINS.top] ] ) 
 		      .on("start brush", updateChart) // Each time the brush selection changes, trigger the 'updateChart' function
 		    )
 
+		// Function that is triggered when brushing is performed
+		function updateChart(event) {
+			extent = event.selection
+		    circle2.classed("selected", function(d){ return isBrushed(extent, X_SCALE(d.Sepal_Width) + MARGINS.left, Y_SCALE(d.Petal_Width) + MARGINS.top) } )
+		}
 
-		  // Function that is triggered when brushing is performed
-		  function updateChart() {
-		    extent = d3.event.selection
-		    circle2.classed("selected", function(d){ return isBrushed(extent, x(d.Sepal_Width), y(d.Petal_Width) ) } )
-		  }
-
-		  // A function that return TRUE or FALSE according if a dot is in the selection or not
-		  function isBrushed(brush_coords, cx, cy) {
-		       let x0 = brush_coords[0][0],
-		           x1 = brush_coords[1][0],
-		           y0 = brush_coords[0][1],
-		           y1 = brush_coords[1][1];
-		      // This return TRUE or FALSE depending on if the points is in the selected area
-		      return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;    
-		  }
+		// A function that return TRUE or FALSE according if a dot is in the selection or not
+		function isBrushed(extent, cx, cy) {
+		    let x0 = extent[0][0],
+		        x1 = extent[1][0],
+		        y0 = extent[0][1],
+			    y1 = extent[1][1];
+		    // This return TRUE or FALSE depending on if the points is in the selected area
+		    return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;    
+		 }
 
 	});
 }
@@ -192,7 +189,6 @@ function widthScatter() {
 widthScatter();
 
 
-// OPACITY MIGHT NOT WORKING??
 // Create frame3
 const FRAME3 = d3.select("#vis3")
 				.append("svg")
@@ -202,63 +198,73 @@ const FRAME3 = d3.select("#vis3")
 
 // Function that plots a bar chart with tooltip 
 function barChart() {
-	// Reading from the bar chart file
-	d3.csv("data/iris.csv").then((data) => {
-
-		// Title
-        FRAME3.append("text")
-	        .attr("x", MARGINS.left + VIS_WIDTH/2)
-	        .attr("y", MARGINS.top - 25)
-	        .attr("text-anchor", "middle")
-	        .attr("font-weight", "700")
-	        .style("font-size", "18px")
-	        .text("Count of Species");
-   
-	    // Add X axis and x ticks 
-		const x = d3.scaleBand()
-	  		.range([0, VIS_WIDTH])
-			.domain(data.map((d) => { return d.Species; }))
-			.padding(0.2);
-		FRAME3.append("g")
-			.attr("transform", "translate(" + MARGINS.left + ", " + (VIS_HEIGHT + MARGINS.top) + ")")
-		  	.call(d3.axisBottom(x))
-		  	.selectAll("text")
-		    .attr("transform", "translate(-10,0)rotate(-45)")
-		    .style("text-anchor", "end");
-
-		// Find max of y 
-		const MAX_Y = 50;
-
-		// Add Y axis
-		const y = d3.scaleLinear()
-		  .domain([0, (MAX_Y)])
-		  .range([VIS_HEIGHT, 0]);
-		FRAME3.append("g")
-			.attr("transform", 
-					"translate(" + MARGINS.left + "," + (MARGINS.bottom) + ")")
-		  	.call(d3.axisLeft(y).ticks(6))
-		  	.attr("font-size", "10px");
-
-		const color = d3.scaleOrdinal()
-			.domain(["virginica", "versicolor", "setosa"])
-		    .range([ "#87CEFA", "#FFA500", "#00FF00" ])
-
-		// Plot barchart
-		FRAME3.selectAll("bars")
-			// Loop through all the data from the dataset and append them as rectangles
-		  	.data(data)
-		  	.enter()
-		  	.append("rect")
-		    	.attr("x", (d) => { return x(d.Species) + MARGINS.left; })
-		    	.attr("y", (d) => { return MARGINS.bottom; })
-			    .attr("width", x.bandwidth())
-			    .attr("height", (d) => { return VIS_HEIGHT - y(50); })
-			    .attr("fill", (d) => { return color(d.Species); })
-			    .style("opacity", 0.5)
-			    .attr("class", "bar");
+	// hardcoded dataset
+    const data = [
+        {species: "setosa", value: 50},
+        {species: "versicolor", value: 50},
+        {species: "verginica", value: 50}
+      ];
 
 
-	});
+	// scale x axis 
+    const X_SCALE = d3.scaleBand()
+    	.domain(data.map((d) => { return d.species; }))
+      	.range([0, VIS_WIDTH])
+      	.padding(0.2);
+
+    // add tick marks for x axis
+    FRAME3.append("g")
+		.attr("transform", "translate(" + MARGINS.left + ", " + (VIS_HEIGHT + MARGINS.top) + ")")
+		.call(d3.axisBottom(X_SCALE))
+		.selectAll("text")
+	    .attr("transform", "translate(-10,0)rotate(-45)")
+	    .style("text-anchor", "end");
+
+	// find max of y 
+	const MAX_Y = d3.max(data, (d) => { return parseInt(d.value); })
+
+    // scale y axis
+    const Y_SCALE = d3.scaleLinear()
+      .domain([0, (MAX_Y)])
+      .range([VIS_HEIGHT, 0]);
+
+    // add tick marks for y axis
+    FRAME3.append("g")
+		.attr("transform", 
+				"translate(" + MARGINS.left + "," + (MARGINS.bottom) + ")")
+	 	.call(d3.axisLeft(Y_SCALE).ticks(12))
+	  	.attr("font-size", "10px");
+
+
+	// Title
+    FRAME3.append("text")
+	    .attr("x", MARGINS.left + VIS_WIDTH/2)
+	    .attr("y", MARGINS.top - 25)
+	    .attr("text-anchor", "middle")
+	    .attr("font-weight", "700")
+	    .style("font-size", "18px")
+	    .text("Count of Species");
+
+
+	const color = d3.scaleOrdinal()
+		.domain(["virginica", "versicolor", "setosa"])
+	    .range([ "#87CEFA", "#FFA500", "#00FF00" ])
+
+	// Plot barchart
+	FRAME3.selectAll("bars")
+		// Loop through all the data from the dataset and append them as rectangles
+	  	.data(data)
+	  	.enter()
+	  	.append("rect")
+	    	.attr("x", (d) => { return X_SCALE(d.species) + MARGINS.left; })
+	    	.attr("y", (d) => { return Y_SCALE(d.value) + MARGINS.top; })
+		    .attr("width", X_SCALE.bandwidth())
+		    .attr("height", (d) => { return VIS_HEIGHT - Y_SCALE(d.value); })
+		    .attr("fill", (d) => { return color(d.species); })
+		    .style("opacity", 0.5)
+		    .attr("class", "bar");
+
+
 }
 // Call the bar chart function to plot 
 barChart();
