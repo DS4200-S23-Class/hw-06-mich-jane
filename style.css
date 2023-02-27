@@ -11,31 +11,13 @@ body {
 /* Flexbox container for children */
 .container {
   display: flex;
+  justify-content: space-evenly;
   flex-direction: row;
 }
 
-
-/* Children 1 that takes up 33% of the page */
-#column1 {
-	flex: 33%;
-	flex-grow: 1;
-}
-
-/* Children 2 that takes up 33% of the page */
-#column2 {
-	flex: 33%;
-	flex-grow: 1;
-}
-
-/* Children 3 that takes up 33% of the page */
-#column3 {
-	flex: 33%;
-	flex-grow: 1;
-}
-
-
+/* Style points selected through brushing */
 .selected {
   opacity: 1 !important;
-  stroke: black;
-  stroke-width: 1px;
+  stroke: orange;
+  stroke-width: 2px;
 }

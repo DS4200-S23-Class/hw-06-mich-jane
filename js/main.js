@@ -36,15 +36,6 @@ function lengthScatter() {
 		const X_SCALE = d3.scaleLinear()
 							.domain([0, (MAX_X + 1)])
 							.range([0, VIS_WIDTH]);
-
-		// Title the scatter plot
-        FRAME1.append("text")
-	        .attr("x", MARGINS.left + VIS_WIDTH/2)
-	        .attr("y", MARGINS.top - 25)
-	        .attr("text-anchor", "middle")
-	        .attr("font-weight", "700")
-	        .style("font-size", "18px")
-	        .text("Petal_Length vs. Sepal_Length");
         
 	    // Add tick marks for x axis
 		FRAME1.append("g")
@@ -60,9 +51,10 @@ function lengthScatter() {
 			.call(d3.axisLeft(Y_SCALE).ticks(14))
 				.attr("font-size", "10px");
 
+		// Set color based on species 
 		const color = d3.scaleOrdinal()
-		    .domain(["setosa", "versicolor", "virginica" ])
-		    .range([ "#00FF00", "#FFA500", "#87CEFA"])
+		    .domain(["setosa", "versicolor", "virginica"])
+		    .range(["#00FF00", "#ff5349", "#87CEFA"])
 
 		// Plot scatter plot
         const circle1 = FRAME1.append("g")
@@ -73,6 +65,7 @@ function lengthScatter() {
 	        .append("circle")
 	        .attr("cx", (d) => { return X_SCALE(d.Sepal_Length) + MARGINS.left; })
 			.attr("cy", (d) => { return Y_SCALE(d.Petal_Length) + MARGINS.top; })
+			// set color, radius, stroke, and opacity
 			.attr("fill", (d) => { return color(d.Species); })
 	        .attr("r", 5)
 	        .attr("stroke", "none")
@@ -113,17 +106,8 @@ function widthScatter() {
 
 		// Scale function for x
 		const X_SCALE = d3.scaleLinear()
-							.domain([0, (MAX_X-1)])
+							.domain([0, (MAX_X - 1)])
 							.range([0, VIS_WIDTH]);
-
-		// Title the scatter plot
-        FRAME2.append("text")
-	        .attr("x", MARGINS.left + VIS_WIDTH/2)
-	        .attr("y", MARGINS.top - 25)
-	        .attr("text-anchor", "middle")
-	        .attr("font-weight", "700")
-	        .style("font-size", "18px")
-	        .text("Petal_Width vs. Sepal_Width");
 
 	    // Add tick marks for x axis
 		FRAME2.append("g")
@@ -139,9 +123,10 @@ function widthScatter() {
 			.call(d3.axisLeft(Y_SCALE).ticks(14))
 				.attr("font-size", "10px");
 
+		// Set color based on species
 		const color = d3.scaleOrdinal()
 			.domain(["virginica", "versicolor", "setosa"])
-		    .range([ "#87CEFA", "#FFA500", "#00FF00" ])
+		    .range([ "#87CEFA", "#ff5349", "#00FF00"]);
 
 		// Plot scatter plot
         const circle2 = FRAME2.append("g")
@@ -152,6 +137,7 @@ function widthScatter() {
 	        .append("circle")
 	        .attr("cx", (d) => { return X_SCALE(d.Sepal_Width) + MARGINS.left; })
 			.attr("cy", (d) => { return Y_SCALE(d.Petal_Width) + MARGINS.top; })
+			// Set color, radius, stroke, and opacity
 			.attr("fill", (d) => { return color(d.Species); })
 	        .attr("r", 5)
 	        .attr("stroke", "none")
@@ -159,18 +145,19 @@ function widthScatter() {
 	        .attr("class", "point");
 
 	    // Add brushing
-	 	 FRAME2
-		  // Add the brush feature using the d3.brush function
+	 	FRAME2
+		  	// Add the brush feature using the d3.brush function
 		    .call( d3.brush()   
-		    // initialise the brush area: start at 0,0 and finishes at width,height            
-		      .extent( [ [MARGINS.left, MARGINS.bottom], [VIS_WIDTH + MARGINS.left, VIS_HEIGHT + MARGINS.top] ] ) 
-		      .on("start brush", updateChart) // Each time the brush selection changes, trigger the 'updateChart' function
-		    )
+		    // initialize the brush area            
+		      .extent([[MARGINS.left, MARGINS.bottom], [VIS_WIDTH + MARGINS.left, VIS_HEIGHT + MARGINS.top]]) 
+		      // Each time the brush selection changes, trigger the 'updateChart' function
+		      .on("start brush", updateChart)
+		      )
 
 		// Function that is triggered when brushing is performed
 		function updateChart(event) {
-			extent = event.selection
-		    circle2.classed("selected", function(d){ return isBrushed(extent, X_SCALE(d.Sepal_Width) + MARGINS.left, Y_SCALE(d.Petal_Width) + MARGINS.top) } )
+			extent = event.selection;
+		    circle2.classed("selected", function(d){ return isBrushed(extent, X_SCALE(d.Sepal_Width) + MARGINS.left, Y_SCALE(d.Petal_Width) + MARGINS.top); });
 		}
 
 		// A function that return TRUE or FALSE according if a dot is in the selection or not
@@ -182,7 +169,6 @@ function widthScatter() {
 		    // This return TRUE or FALSE depending on if the points is in the selected area
 		    return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;    
 		 }
-
 	});
 }
 // Call the width scatter plot function to plot data points
@@ -196,7 +182,7 @@ const FRAME3 = d3.select("#vis3")
 					.attr("width", FRAME_WIDTH)
 					.attr("class", "frame");
 
-// Function that plots a bar chart with tooltip 
+// Function that plots a bar chart 
 function barChart() {
 	// hardcoded dataset
     const data = [
@@ -206,13 +192,13 @@ function barChart() {
       ];
 
 
-	// scale x axis 
+	// Scale x axis 
     const X_SCALE = d3.scaleBand()
     	.domain(data.map((d) => { return d.species; }))
       	.range([0, VIS_WIDTH])
       	.padding(0.2);
 
-    // add tick marks for x axis
+    // Add tick marks for x axis
     FRAME3.append("g")
 		.attr("transform", "translate(" + MARGINS.left + ", " + (VIS_HEIGHT + MARGINS.top) + ")")
 		.call(d3.axisBottom(X_SCALE))
@@ -220,35 +206,25 @@ function barChart() {
 	    .attr("transform", "translate(-10,0)rotate(-45)")
 	    .style("text-anchor", "end");
 
-	// find max of y 
-	const MAX_Y = d3.max(data, (d) => { return parseInt(d.value); })
+	// Find max of y 
+	const MAX_Y = d3.max(data, (d) => { return parseInt(d.value); });
 
-    // scale y axis
+    // Scale y axis
     const Y_SCALE = d3.scaleLinear()
       .domain([0, (MAX_Y)])
       .range([VIS_HEIGHT, 0]);
 
-    // add tick marks for y axis
+    // Add tick marks for y axis
     FRAME3.append("g")
 		.attr("transform", 
 				"translate(" + MARGINS.left + "," + (MARGINS.bottom) + ")")
 	 	.call(d3.axisLeft(Y_SCALE).ticks(12))
 	  	.attr("font-size", "10px");
 
-
-	// Title
-    FRAME3.append("text")
-	    .attr("x", MARGINS.left + VIS_WIDTH/2)
-	    .attr("y", MARGINS.top - 25)
-	    .attr("text-anchor", "middle")
-	    .attr("font-weight", "700")
-	    .style("font-size", "18px")
-	    .text("Count of Species");
-
-
+	// Set color based on species
 	const color = d3.scaleOrdinal()
 		.domain(["virginica", "versicolor", "setosa"])
-	    .range([ "#87CEFA", "#FFA500", "#00FF00" ])
+	    .range([ "#87CEFA", "#ff5349", "#00FF00" ]);
 
 	// Plot barchart
 	FRAME3.selectAll("bars")
@@ -263,15 +239,6 @@ function barChart() {
 		    .attr("fill", (d) => { return color(d.species); })
 		    .style("opacity", 0.5)
 		    .attr("class", "bar");
-
-
 }
 // Call the bar chart function to plot 
-barChart();
-
-
-// If the user brushes over points in the second scatter plot, corresponding points in the first scatter plot should be 
-// highlighted with increased opacity and an orange border and corresponding bars should be highlighted with an orange 
-// border in the bar chart.
-
- 
+barChart(); 
