@@ -30,7 +30,7 @@ const FRAME3 = d3.select("#vis3")
 d3.csv("data/iris.csv").then((data) => {
 
 	// Set color based on species 
-	let color = d3.scaleOrdinal()
+	const color = d3.scaleOrdinal()
 	    .domain(["setosa", "versicolor", "virginica"])
 	    .range(["#90EE90", "#FF5349", "#ADD8E6"])
 
