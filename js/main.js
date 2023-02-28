@@ -32,7 +32,7 @@ d3.csv("data/iris.csv").then((data) => {
 	// Set color based on species 
 	const color = d3.scaleOrdinal()
 	    .domain(["setosa", "versicolor", "virginica"])
-	    .range(["#90EE90", "#FF5349", "#ADD8E6"])
+	    .range(["#2B3467", "#BAD7E9", "#EB455F"])
 
 // Petal_Length vs Sepal_Length Scatter plot
 
@@ -207,7 +207,7 @@ d3.csv("data/iris.csv").then((data) => {
 		    let x0 = brush_coords[0][0],
 		        x1 = brush_coords[1][0],
 		        y0 = brush_coords[0][1],
-			    y1 = brush_coords[1][1];
+			    y1 = brush_coords[1][1]; 
 		    // This return TRUE or FALSE depending on if the points is in the selected area
 		    return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;    
 		 }
